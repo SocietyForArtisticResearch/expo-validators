@@ -1,0 +1,9 @@
+{
+	"research": "1949839",
+	"resize": "true",
+	"data[2990754][left]": "233",
+	"data[2990754][top]": "594",
+	"data[2990754][width]": "508",
+	"data[2990754][height]": "289",
+	"data[2990754][rotate]": "0"
+}
