@@ -9,6 +9,7 @@ function isScroller(el) {
         elStyle.overflowX === 'auto' ||
         elStyle.overflowY === 'auto') {
         if (el.scrollHeight > el.clientHeight) {
+            console.log("scroll: ", el.scrollHeight)
             return true;
         }
         if (el.scrollWidth > el.clientWidth) {
@@ -22,16 +23,17 @@ var els = document.querySelectorAll('body *');
 var scrollableElements = [];
 for (var i = 0, el; el = els[i]; i++) {
     if (isScroller(el)) {
-        var parent = el.parentNode;
+        var parent = el.parentNode; 
+        var tool = el;
         if (parent.className && parent.className.includes('tool')) {
             var anchor = parent.querySelector('a');
             scrollableElements.push({
                 tag: parent.tagName,
                 id: anchor ? anchor.id : '',
                 classes: parent.className || '',
-                scrollHeight: parent.scrollHeight,
+                scrollHeight: tool.scrollHeight,
                 clientHeight: parent.clientHeight,
-                scrollWidth: parent.scrollWidth,
+                scrollWidth: tool.scrollWidth,
                 clientWidth: parent.clientWidth
             });
         }

@@ -14,7 +14,8 @@ def main(url):
     scrollable_elements = driver.execute_script(script)
 
     for index, element in enumerate(scrollable_elements, start=1):
-        print(f"Scrollbar {index}: Tag: {element['tag']}, ID: {element['id']}, Classes: {element['classes']}, Link: {url + "#" + element['id']}")
+        str = f"""Scrollbar {index}: Tag: {element['tag']}, ID: {element['id']}, Classes: {element['classes']}, Link: {url + "#" + element['id']}, ScrollHeight: {element['scrollHeight']},ClientHeight: {element['clientHeight']}"""
+        print(str)
 
     driver.quit()
 
