@@ -35,7 +35,7 @@ def detect_and_fix_scrollbars(driver, session, url):
     if scrollbars_count: 
         print(f"{scrollbars_count} scrollbars found on {url}.")
         
-        choice = input("Enter 'A' to fix all scrollbars, or 'S' to select specific scrollbars: ").strip().upper()
+        choice = input("Enter 'A' to fix all scrollbars, 'S' to select specific scrollbars, or 'K' to skip this page: ").strip().upper()
 
         if choice == 'A':
             for element in scrollable_elements:
@@ -50,6 +50,8 @@ def detect_and_fix_scrollbars(driver, session, url):
                     fix_scrollbar(session, int(element['id'].split('-')[1]), int(element['scrollHeight']))
                 else:
                     print(f"Invalid scrollbar index: {index}")
+        elif choice == 'K':
+            print("Skipping this page.")
         else:
             print("Invalid choice. No scrollbars were fixed.")
     else:
