@@ -2,6 +2,9 @@ import argparse
 from selenium import webdriver
 from rcedit import RCEdit
 import getpass
+from rc_soup_pages import getAllPages
+import requests
+from bs4 import BeautifulSoup
 
 def fix_scrollbar(session, item, newHeight):
     print(f"{session}, tool: {item}")
@@ -16,11 +19,7 @@ def fix_scrollbar(session, item, newHeight):
         i[1]['style']['rotate']
     )
 
-def main(url):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless') 
-    driver = webdriver.Chrome(options=options)
-
+def detect_and_fix_scrollbars(driver, session, url):
     driver.get(url)
 
     with open('detect_scrollbars.js', 'r') as file:
@@ -34,17 +33,12 @@ def main(url):
         print(str)
     
     if scrollbars_count: 
-        print(f"{scrollbars_count} scrollbars found. Login to fix them.")
-
-        username = input('Enter username: ')
-        password = getpass.getpass('Enter password: ')
-        session = RCEdit(url.split('/')[4])
-        session.login(username=username, password=password)
-
+        print(f"{scrollbars_count} scrollbars found on {url}.")
+        
         choice = input("Enter 'A' to fix all scrollbars, or 'S' to select specific scrollbars: ").strip().upper()
 
         if choice == 'A':
-            for index, element in enumerate(scrollable_elements, start=1):
+            for element in scrollable_elements:
                 fix_scrollbar(session, int(element['id'].split('-')[1]), int(element['scrollHeight']))
         elif choice == 'S':
             selected_indices = input("Enter the index of the scrollbars you want to fix (e.g., 1, 3, 5): ")
@@ -59,8 +53,26 @@ def main(url):
         else:
             print("Invalid choice. No scrollbars were fixed.")
     else:
-        print("No scrollbars found.")
+        print(f"No scrollbars found on {url}.")
 
+def main(url):
+    expo = requests.get(url)
+    parsed = BeautifulSoup(expo.content, 'html.parser')
+    pages = getAllPages(url, parsed)
+    
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless') 
+    driver = webdriver.Chrome(options=options)
+
+    username = input('Enter username: ')
+    password = getpass.getpass('Enter password: ')
+    session = RCEdit(url.split('/')[4])
+    session.login(username=username, password=password)
+
+    for page_url in pages:
+        print(f"Processing page: {page_url}")
+        detect_and_fix_scrollbars(driver, session, page_url)
+    
     driver.quit()
 
 if __name__ == '__main__':
