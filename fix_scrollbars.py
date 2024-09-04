@@ -30,7 +30,7 @@ def main(url):
     scrollbars_count = len(scrollable_elements)
     
     for index, element in enumerate(scrollable_elements, start=1):
-        str = f"""Scrollbar {index}: Tag: {element['tag']}, ID: {element['id']}, Classes: {element['classes']}, Link: {url + "#" + element['id']}, ScrollHeight: {element['scrollHeight']}, ClientHeight: {element['clientHeight']}"""
+        str = f"""Scrollbar {index}: ID: {element['id']}, Link: {url + "#" + element['id']}, ScrollHeight: {element['scrollHeight']}, ClientHeight: {element['clientHeight']}"""
         print(str)
     
     if scrollbars_count: 
@@ -41,8 +41,23 @@ def main(url):
         session = RCEdit(url.split('/')[4])
         session.login(username=username, password=password)
 
-        for index, element in enumerate(scrollable_elements, start=1):
-            fix_scrollbar(session, int(element['id'].split('-')[1]), int(element['scrollHeight']))
+        choice = input("Enter 'A' to fix all scrollbars, or 'S' to select specific scrollbars: ").strip().upper()
+
+        if choice == 'A':
+            for index, element in enumerate(scrollable_elements, start=1):
+                fix_scrollbar(session, int(element['id'].split('-')[1]), int(element['scrollHeight']))
+        elif choice == 'S':
+            selected_indices = input("Enter the index of the scrollbars you want to fix (e.g., 1, 3, 5): ")
+            selected_indices = [int(x.strip()) for x in selected_indices.split(',') if x.strip().isdigit()]
+            
+            for index in selected_indices:
+                if 1 <= index <= scrollbars_count:
+                    element = scrollable_elements[index - 1]
+                    fix_scrollbar(session, int(element['id'].split('-')[1]), int(element['scrollHeight']))
+                else:
+                    print(f"Invalid scrollbar index: {index}")
+        else:
+            print("Invalid choice. No scrollbars were fixed.")
     else:
         print("No scrollbars found.")
 
